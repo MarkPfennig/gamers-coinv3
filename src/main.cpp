@@ -1266,12 +1266,14 @@ unsigned int static GetNextWorkRequired_V2(const CBlockIndex* pindexLast, const 
         int64 PastSecondsMax = TimeDaySeconds * 0.14;
 		
 		if(nHeight>=Target_Time_Switch) {
-			BlocksTargetSpacing = BlocksTargetSpacing_New;
+			uint64 PastBlocksMin = PastSecondsMin / BlocksTargetSpacing_New;
+			uint64 PastBlocksMax = PastSecondsMax / BlocksTargetSpacing_New;
+			return KimotoGravityWell(pindexLast, pblock, BlocksTargetSpacing_New, PastBlocksMin, PastBlocksMax);
+		} else {
+			uint64 PastBlocksMin = PastSecondsMin / BlocksTargetSpacing;
+			uint64 PastBlocksMax = PastSecondsMax / BlocksTargetSpacing;
+			return KimotoGravityWell(pindexLast, pblock, BlocksTargetSpacing, PastBlocksMin, PastBlocksMax);
 		}
-
-		uint64 PastBlocksMin = PastSecondsMin / BlocksTargetSpacing;
-		uint64 PastBlocksMax = PastSecondsMax / BlocksTargetSpacing;
-		return KimotoGravityWell(pindexLast, pblock, BlocksTargetSpacing, PastBlocksMin, PastBlocksMax);
 }
 
 unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
